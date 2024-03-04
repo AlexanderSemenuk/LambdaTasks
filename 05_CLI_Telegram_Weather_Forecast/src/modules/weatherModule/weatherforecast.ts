@@ -1,53 +1,51 @@
-import { Forecast, ForecastData } from "./models/weatherModels.js"
+
 import axios from "axios"
 
-export const getForecast = async (city: string, step: number): Promise<string> => {
-    try {
-      const weatherForecast = await axios.get<Forecast>(
-        `https://api.openweathermap.org/data/2.5/forecast?appid=${process.env.Weather_Api_Key}=${city}&lang=ua&units=metric`
-      );
+const apiKey = process.env.Weather_Api_Key;
+
+export async function getCityLocation(city) {
+  const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`;
   
-      const forecasts: ForecastData[] = weatherForecast.data.list;
-      let output = `Weather in ${city} with an ${step} hr period.\n`;
-      let currentDate = "";
-  
-      const filteredForecasts = forecasts.filter((e, i) => {
-        const date = new Date(e.dt * 1000);
-        return step === 3
-          ? new Date().getTime() < date.getTime()
-          : date.getUTCHours() % step === 0 &&
-              new Date().getTime() < date.getTime();
-      });
-  
-      filteredForecasts.forEach((item: ForecastData) => {
-        const dateTime = new Date(item.dt * 1000);
-        const date = dateTime.toLocaleDateString("uk-UA", {
-          weekday: "long",
-          month: "short",
-          day: "numeric",
-        });
-        const time = dateTime.toLocaleTimeString("uk-UA", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        });
-  
-        if (currentDate !== date) {
-          if (currentDate !== "") output += "\n";
-          output += `${date}:\n`;
-          currentDate = date;
+  const response = await axios.get(url);
+  const cityData = response.data[0];
+
+  return { lat: cityData.lat, lon: cityData.lon };
+}
+
+export async function getForecast(latitude, longitude, interval) {
+  const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+
+  const response = await axios.get(apiUrl);
+  const forecastData = response.data;
+
+  const cityName = forecastData.city.name;
+  let formattedForecast = `Weather in ${cityName}: `;
+  let currentDate = "";
+
+  forecastData.list.forEach((item) => {
+    
+    const temperature = item.main.temp.toFixed(1);
+    const feelsLike = item.main.feels_like.toFixed(1);
+    const weatherDescription = item.weather[0].description;
+    const dateTime = new Date(item.dt_txt);
+    const hour = dateTime.getHours();
+    const date = dateTime.toISOString().split("T")[0];
+    const time = dateTime.toTimeString().split(" ")[0].substring(0, 5);
+    
+
+    if (hour % interval === 0) {
+      if (currentDate !== date) {
+        if (formattedForecast !== "") {
+          formattedForecast += "\n\n";
         }
-  
-        const temp = item.main.temp.toFixed(1);
-        const feelsLike = item.main.feels_like.toFixed(1);
-        const weather = item.weather[0].description;
-  
-        output += `    ${time}, ${temp}°C, Feels like ${feelsLike}°C, ${weather}\n`;
-      });
-  
-      return output;
-    } catch (error) {
-      console.error("Error fetching weather forecast:", error);
-      return "Error fetching weather forecast";
+        formattedForecast += `${date.split("-").reverse().join(".")}:`;
+        currentDate = date;
+      }
+        formattedForecast += `\n${time}: ${temperature}°C, Feels like: ${feelsLike}°C, ${
+          weatherDescription.charAt(0).toUpperCase() +
+          weatherDescription.slice(1)
+        }`;
     }
-  };
+  });
+  return formattedForecast;
+}
