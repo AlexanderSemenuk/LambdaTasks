@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import * as fs from 'fs/promises';
-import {uploadFile, generateLink} from './src/uploadFile';
-import {createTinyLink} from './src/createLink';
+import {uploadFile, generateLink} from './src/uploadFile.js';
+import {createTinyLink} from './src/createLink.js';
 
 
 importPicture();
