@@ -1,8 +1,8 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { Command } from 'commander';
 const program = new Command();
-const token = 'token';
-const chatId = 'chatId';
+const token = '7089212699:AAG7RCSpFgNF3pRgbXwrhWsD2NAYcERYH4k';
+const chatId = '384823683';
 const bot = new TelegramBot(token, { polling: true });
 program
     .command("m <message...>")

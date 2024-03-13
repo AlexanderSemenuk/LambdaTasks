@@ -69,7 +69,7 @@ async function askToSearchDB() {
             }
         ]);
 
-        const foundUser = data.find(user => user.userName.toLowerCase() === searchResult.toLowerCase());
+        const foundUser = data.filter(user => user.userName.toLowerCase().includes(searchResult.toLowerCase()));
 
         if (foundUser) {
             console.log('User found:', foundUser);

@@ -1,7 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import axios from "axios";
 import * as dotenv from 'dotenv';
-import { commands } from "./modules/commandsModule/commandHandlers.js";
 import express from "express";
 dotenv.config();
 

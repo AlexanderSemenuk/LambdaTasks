@@ -2,7 +2,7 @@ import TelegramBot from "node-telegram-bot-api";
 import axios from "axios";
 
 
-const token = "token";
+const token = "7089212699:AAG7RCSpFgNF3pRgbXwrhWsD2NAYcERYH4k";
 
 const bot = new TelegramBot(token, {polling: true});
 
