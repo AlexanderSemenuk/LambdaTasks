@@ -10,7 +10,7 @@ async function getPhoto() {
     const response = await axios.get('https://picsum.photos/200/300', {
         responseType: 'arraybuffer'
     });
-    return response.headers.location;
+    return response.data.location;
 }
 bot.on('message', async (msg)=> {
     const chatId = msg.chat.id;
@@ -19,9 +19,7 @@ bot.on('message', async (msg)=> {
     console.log(`Message received from ${msg.from.first_name}: ${messageReceived}`);
 
     if (messageReceived.toLowerCase() === 'photo') {
-          const response = await axios.get('https://picsum.photos/200/300', {
-            responseType: 'arraybuffer'
-        });
+          const response = getPhoto();
         const photoUrl = Buffer.from(response.data, "binary");
         bot.sendPhoto(chatId, photoUrl);
       } else {
