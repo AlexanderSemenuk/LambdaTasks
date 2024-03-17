@@ -4,5 +4,6 @@ import vacations from "./vacations.json" assert { type: "json" };
 
 const rawVacations: VacationData[] = vacations;
 
-console.log(transformVacations(rawVacations));
+const transformedData = transformVacations(rawVacations);
 
+console.log(JSON.stringify(transformedData, null, 2));
